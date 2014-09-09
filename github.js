@@ -42,7 +42,3 @@ appAPI.ready(function($) {
   var user = "zeke"
   GitHub.getCommandList(user);
 })
-
-
-
-
