@@ -1,4 +1,18 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/z/code/personal/queriac/index.js":[function(require,module,exports){
+var sync = require("./lib/sync")
+
+if (typeof(appAPI) !== "undefined") {
+  appAPI.ready(function($) {
+    sync(function(err, queriac){
+      if (err) return console.error(err)
+      console.log(queriac)
+    })
+  })
+} else {
+  console.log("appAPI not defined")
+}
+
+},{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
 var URL = require("url")
 var async = require("async")
 var superagent = require("superagent")
@@ -6,7 +20,7 @@ var atob = require("atob")
 var pick = require("lodash.pick")
 var pluck = require("lodash.pluck")
 var user = "zeke"
-var ghToken = "2e5a23e5341c1858baf6eefe20f66d20cc404530"
+var ghToken = "777d3e3234da21ed5e0cae6debec0d12bd729167"
 var repoURL = URL.format({
   protocol: "https",
   auth: ghToken,
@@ -14,18 +28,18 @@ var repoURL = URL.format({
   pathname: "/repos/" + user + "/queriac-commands/contents",
 })
 var commentPattern = new RegExp("^\/\/ ?")
+var queriac = {
+  commands: {}
+}
 
-var getCommands = function(callback) {
 
-  // Don't fetch more than once every five minutes
-  if (typeof queriac != "undefined" && Date.now()-queriac.lastSyncedAt < 1000*60*5 ) {
-    console.log("queriac synced recently")
-    return callback(null)
-  }
+var sync = module.exports = function(callback) {
 
-  window.queriac = {
-    commands: {}
-  }
+  // // Don't fetch more than once every five minutes
+  // if (typeof queriac != "undefined" && Date.now()-queriac.lastSyncedAt < 1000*60*5 ) {
+  //   console.log("queriac synced recently")
+  //   return callback(null)
+  // }
 
   superagent.get(repoURL, function(err, res) {
     if (err) return callback(err)
@@ -35,8 +49,6 @@ var getCommands = function(callback) {
       parts.auth = ghToken
       return URL.format(parts)
     })
-
-    console.log(urls)
 
     async.map(urls, superagent.get, function(err, commands){
       if (err) return callback(err)
@@ -48,33 +60,30 @@ var getCommands = function(callback) {
         var name = command.name.replace(/\.js$/i, "")
 
         // Decode the Base64 string that GitHub API returns
-        var content = atob(command.content.replace(" ", ""))
+        var functionBody = atob(command.content.replace(" ", ""))
 
-        queriac.commands[name] = {}
-
-        // Turn arguments into an array called `args`
-        queriac.commands[name].script = function() {
-          var args = Array.prototype.slice.apply(arguments)
-          eval(content)
+        queriac.commands[name] = {
+          functionBody: functionBody
         }
 
+        // Turn arguments into an array called `args`
+        // queriac.commands[name].functionBody = function() {
+        //   var args = Array.prototype.slice.apply(arguments)
+        //   eval(content)
+        // }
+
         // A comment on the first line of the file becomes the description.
-        if (content.match(commentPattern)) {
-          queriac.commands[name].description = content.split("\n")[0].replace(commentPattern, "")
+        if (functionBody.match(commentPattern)) {
+          queriac.commands[name].description = functionBody.split("\n")[0].replace(commentPattern, "")
         }
 
       })
       queriac.lastSyncedAt = Date.now()
-      return callback(null)
+      return callback(null, queriac)
     })
   })
 
 }
-
-getCommands(function(err){
-  if (err) return console.error(err)
-  console.log(queriac)
-})
 
 },{"async":"/Users/z/code/personal/queriac/node_modules/async/lib/async.js","atob":"/Users/z/code/personal/queriac/node_modules/atob/index.js","lodash.pick":"/Users/z/code/personal/queriac/node_modules/lodash.pick/index.js","lodash.pluck":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/index.js","superagent":"/Users/z/code/personal/queriac/node_modules/superagent/lib/client.js","url":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js"}],"/Users/z/code/personal/queriac/node_modules/async/lib/async.js":[function(require,module,exports){
 (function (process){
