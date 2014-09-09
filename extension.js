@@ -47,6 +47,7 @@ var repoURL = URL.format({
   pathname: "/repos/" + user + "/queriac-commands/contents",
 })
 var commentPattern = new RegExp("^\/\/ ?")
+var jsExtension = new RegExp("\.js$", "i")
 var commands = {}
 
 var sync = module.exports = function(callback) {
@@ -66,8 +67,11 @@ var sync = module.exports = function(callback) {
 
       files.forEach(function(file){
 
+        // Skip non-javascript files
+        if (!file.name.match())
+
         // The filename is the command name
-        var name = file.name.replace(/\.js$/i, "")
+        var name = file.name.replace(jsExtension, "")
 
         // Decode the Base64 string that GitHub API returns
         var functionBody = atob(file.content.replace(" ", ""))
