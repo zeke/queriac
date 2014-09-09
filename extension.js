@@ -48,6 +48,7 @@ var repoURL = URL.format({
 })
 var commentPattern = new RegExp("^\/\/ ?")
 var jsExtension = new RegExp("\.js$", "i")
+var specialFilename = new RegExp("^_")
 var commands = {}
 
 var sync = module.exports = function(callback) {
@@ -67,8 +68,11 @@ var sync = module.exports = function(callback) {
 
       files.forEach(function(file){
 
-        // Skip non-javascript files
-        if (!file.name.match())
+        // Skip files that don't have a .js extension
+        if (!file.name.match(jsExtension)) return
+
+        // Skip "special" files that start with underscores
+        if (file.name.match(specialFilename)) return
 
         // The filename is the command name
         var name = file.name.replace(jsExtension, "")
