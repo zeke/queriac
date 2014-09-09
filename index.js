@@ -1,16 +1,31 @@
 window.sync = require("./lib/sync")
 
 if (typeof(appAPI) === "undefined") {
-  window.appAPI = {
-    ready: function(callback) { return callback(); }
-  }
+  return console.log("not running in extension; bailing")
 }
 
 appAPI.ready(function($) {
-  console.log("Hello from extension land!")
-  sync(function(err, queriac){
-    if (err) return console.error(err)
-    console.log(queriac)
-    console.log(JSON.stringify(queriac, null, 2))
+  appAPI.db.async.getList(function(items){
+
+    if (items.length) {
+      var commands = JSON.parse(items[0].value)
+      console.log("Found commands in extension database!", commands)
+      return;
+    }
+
+    sync(function(err, commands){
+      console.log("original", commands)
+      if (err) return console.error(err)
+      appAPI.db.async.set(
+        'commands',
+        JSON.stringify(commands, null, 2),
+        appAPI.time.secondsFromNow(30),
+        function(){
+          console.log("Saved commands")
+        }
+      )
+    })
+
   })
+
 })

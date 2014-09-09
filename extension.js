@@ -2,18 +2,33 @@
 window.sync = require("./lib/sync")
 
 if (typeof(appAPI) === "undefined") {
-  window.appAPI = {
-    ready: function(callback) { return callback(); }
-  }
+  return console.log("not running in extension; bailing")
 }
 
 appAPI.ready(function($) {
-  console.log("Hello from extension land!")
-  sync(function(err, queriac){
-    if (err) return console.error(err)
-    console.log(queriac)
-    console.log(JSON.stringify(queriac, null, 2))
+  appAPI.db.async.getList(function(items){
+
+    if (items.length) {
+      var commands = JSON.parse(items[0].value)
+      console.log("Found commands in extension database!", commands)
+      return;
+    }
+
+    sync(function(err, commands){
+      console.log("original", commands)
+      if (err) return console.error(err)
+      appAPI.db.async.set(
+        'commands',
+        JSON.stringify(commands, null, 2),
+        appAPI.time.secondsFromNow(30),
+        function(){
+          console.log("Saved commands")
+        }
+      )
+    })
+
   })
+
 })
 
 },{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
@@ -32,18 +47,9 @@ var repoURL = URL.format({
   pathname: "/repos/" + user + "/queriac-commands/contents",
 })
 var commentPattern = new RegExp("^\/\/ ?")
-var queriac = {
-  commands: {}
-}
-
+var commands = {}
 
 var sync = module.exports = function(callback) {
-
-  // // Don't fetch more than once every five minutes
-  // if (typeof queriac != "undefined" && Date.now()-queriac.lastSyncedAt < 1000*60*5 ) {
-  //   console.log("queriac synced recently")
-  //   return callback(null)
-  // }
 
   superagent.get(repoURL, function(err, res) {
     if (err) return callback(err)
@@ -54,36 +60,35 @@ var sync = module.exports = function(callback) {
       return URL.format(parts)
     })
 
-    async.map(urls, superagent.get, function(err, commands){
+    async.map(urls, superagent.get, function(err, files){
       if (err) return callback(err)
-      commands = pluck(commands, 'body')
+      files = pluck(files, 'body')
 
-      commands.forEach(function(command){
+      files.forEach(function(file){
 
         // The filename is the command name
-        var name = command.name.replace(/\.js$/i, "")
+        var name = file.name.replace(/\.js$/i, "")
 
         // Decode the Base64 string that GitHub API returns
-        var functionBody = atob(command.content.replace(" ", ""))
+        var functionBody = atob(file.content.replace(" ", ""))
 
-        queriac.commands[name] = {
+        commands[name] = {
           functionBody: functionBody
         }
 
         // Turn arguments into an array called `args`
-        // queriac.commands[name].functionBody = function() {
+        // commands[name].functionBody = function() {
         //   var args = Array.prototype.slice.apply(arguments)
         //   eval(content)
         // }
 
         // A comment on the first line of the file becomes the description.
         if (functionBody.match(commentPattern)) {
-          queriac.commands[name].description = functionBody.split("\n")[0].replace(commentPattern, "")
+          commands[name].description = functionBody.split("\n")[0].replace(commentPattern, "")
         }
 
       })
-      queriac.lastSyncedAt = Date.now()
-      return callback(null, queriac)
+      return callback(null, commands)
     })
   })
 
