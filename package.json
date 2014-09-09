@@ -4,7 +4,7 @@
   "description": "A browser extension that gives you a universal javascript command line in your browser. Set up a github repository full of javascript files, and each file becomes a command.",
   "main": "index.js",
   "scripts": {
-    "dev": "watchify index.js -o bundle.js -v"
+    "dev": "watchify index.js -o extension.js -v"
   },
   "repository": {
     "type": "git",
