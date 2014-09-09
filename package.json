@@ -19,6 +19,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "atob": "^1.1.2",
+    "lodash.pick": "^2.4.1",
     "lodash.pluck": "^2.4.1",
     "superagent": "^0.18.2"
   },
