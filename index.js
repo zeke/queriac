@@ -13,6 +13,9 @@ window.inject = function(commands) {
 }
 
 appAPI.ready(function($) {
+
+  console.log(appAPI.appInfo)
+  
   // appAPI.db.removeAll()
   appAPI.db.async.getList(function(items){
 
