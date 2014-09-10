@@ -1,6 +1,7 @@
 window.sync = require("./lib/sync")
 window.fmt = require("util").format
-window.host = "http://localhost:9000"
+// window.host = "http://localhost:9000"
+window.host = "https://queriac.herokuapp.com"
 
 if (typeof(appAPI) === "undefined") {
   return console.log("not in extension context")

@@ -1,18 +1,11 @@
-console.log("UI")
-// console.log($)
-// document.write("foo")
-
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 window.Queriac = (function() {
 
   function Queriac() {
-    // Do some Scope binding nonsense
+    // Do some scope binding nonsense
     var funks = ['init', 'close', 'exec', 'handleKeypress', 'handleShiftPress', 'open', 'updateStyles']
     for (var i in funks) this[funks[i]] = __bind(this[funks[i]], this)
-
-    // document.addEventListener('DOMContentLoaded', this.init);
-    // this.init();
   }
 
   Queriac.prototype.init = function() {
@@ -88,15 +81,10 @@ window.Queriac = (function() {
       var args = this.input.value.split(' ')
       var keyword = args.shift()
 
-      // Find the given keyword's command in 'local storage'
-      // The function will have access to the local `args` variable
-      console.log(keyword, args)
-
       if (!window.commands[keyword])
         return console.log("Command not found: %s", keyword)
 
       eval(commands[keyword].functionBody)
-
     }
     this.close()
   }
@@ -120,3 +108,5 @@ window.Queriac = (function() {
 
 window.queriac = new Queriac();
 queriac.init()
+
+console.log("Created window.queriac")
