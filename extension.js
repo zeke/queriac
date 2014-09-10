@@ -1,23 +1,26 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/z/code/personal/queriac/index.js":[function(require,module,exports){
 window.sync = require("./lib/sync")
 window.fmt = require("util").format
+window.host = "http://localhost:9000"
 
 if (typeof(appAPI) === "undefined") {
   return console.log("not in extension context")
 }
 
+window.inject = function(commands) {
+  appAPI.dom.addInlineJS(fmt("window.commands=JSON.parse(%j)", JSON.stringify(commands)))
+  appAPI.dom.addRemoteJS(fmt("%s/ui.js", host))
+}
+
 appAPI.ready(function($) {
-
-  // console.log(appAPI.dom)
-
+  // appAPI.db.removeAll()
   appAPI.db.async.getList(function(items){
 
     if (items.length) {
       var commands = JSON.parse(items[0].value)
-      console.log("Found commands in extension database!", commands)
-      appAPI.dom.addInlineJS(fmt("window.commands=JSON.parse(%j)", JSON.stringify(commands)))
-      appAPI.dom.addRemoteJS("http://localhost:9000/ui.js")
-      return;
+      console.log("Found cached commands", commands)
+      inject(commands)
+      return
     }
 
     sync(function(err, commands){
@@ -26,15 +29,14 @@ appAPI.ready(function($) {
       appAPI.db.async.set(
         'commands',
         JSON.stringify(commands, null, 2),
-        appAPI.time.minutesFromNow(30),
+        appAPI.time.minutesFromNow(300),
         function(){
           console.log("Saved commands")
+          inject(commands)
         }
       )
     })
-
   })
-
 })
 
 },{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js","util":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
@@ -44,6 +46,8 @@ var superagent = require("superagent")
 var atob = require("atob")
 var pick = require("lodash.pick")
 var pluck = require("lodash.pluck")
+var RateLimiter = require('limiter').RateLimiter
+var limiter = new RateLimiter(1, 2000)
 var user = "zeke"
 var ghToken = "2e5a23e5341c1858baf6eefe20f66d20cc404530"
 // var ghToken = "777d3e3234da21ed5e0cae6debec0d12bd729167"
@@ -58,9 +62,6 @@ var commentPattern = new RegExp("^\/\/ ?")
 var jsExtension = new RegExp("\.js$", "i")
 var specialFilename = new RegExp("^_")
 var commands = {}
-
-var RateLimiter = require('limiter').RateLimiter
-var limiter = new RateLimiter(1, 2000)
 
 var sync = module.exports = function(callback) {
 
@@ -79,7 +80,7 @@ var sync = module.exports = function(callback) {
     })
 
     async.map(
-      urls.slice(0, 2000),
+      urls.slice(0, 500),
 
       function(url, callback) {
         limiter.removeTokens(1, function() {

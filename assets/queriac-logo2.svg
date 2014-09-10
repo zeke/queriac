@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="511px" height="511px" viewBox="0 0 511 511" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8053) - http://www.bohemiancoding.com/sketch -->
+    <title>monogram</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="512" sketch:type="MSArtboardGroup" fill="#000000">
+            <g id="monogram" sketch:type="MSLayerGroup" transform="translate(1.000000, 1.000000)">
+                <g id="Group" sketch:type="MSShapeGroup">
+                    <g id="Shape">
+                        <path d="M322.8113,428.5003 C301.6038,436.8677 278.5416,441.5155 254.3948,441.5155 C151.283,441.5155 67.3948,357.6307 67.3948,254.5155 C67.3948,151.4037 151.283,67.5155 254.3948,67.5155 C357.5049,67.5155 441.3965,151.4037 441.3965,254.5121 C441.3965,278.6606 436.7487,301.7296 428.3745,322.9388 L479.5938,374.1581 C498.593,338.4717 509.3965,297.7635 509.3965,254.5155 C509.3965,113.6807 395.2245,-0.4845 254.3948,-0.4845 C113.5634,-0.4845 -0.6052,113.6807 -0.6052,254.5155 C-0.6052,395.3486 113.5634,509.5155 254.3948,509.5155 C297.6394,509.5155 338.3476,498.7171 374.034,479.7196 L322.8113,428.5003 L322.8113,428.5003 Z"></path>
+                        <path d="M461.1046,403.75 L412.1242,354.7747 C397.392,377.8709 377.7451,397.5212 354.6489,412.25 L403.6293,461.2304 C425.7174,445.2538 445.1314,425.8432 461.1046,403.75 L461.1046,403.75 Z"></path>
+                    </g>
+                    <rect id="Rectangle-path" transform="translate(408.139825, 407.871735) rotate(225.000000) translate(-408.139825, -407.871735) " x="312.090746" y="367.072126" width="192.448354" height="81.2830205"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

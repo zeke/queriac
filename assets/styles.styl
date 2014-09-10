@@ -1,0 +1,58 @@
+headingFont = "Roboto Slab"
+
+body
+  font-family "PT Serif"
+  // background #F0F0F0
+  margin 0
+  padding 0
+
+#logo
+  position relative
+  margin 30px auto 20px auto
+  width 160px
+  height 160px
+  img
+    width 100%
+    height 100%
+    display block
+    transition all 0.8s
+    opacity 0
+    transform rotateX(90deg)
+
+  &.active
+    img
+      opacity 1
+      transform rotateX(0deg)
+
+section
+  position relative
+  margin 0 auto
+  max-width 600px
+  padding 20px
+  background white
+
+h1, h2, h3, h4, h5, h6
+
+  font-family headingFont
+
+h1
+  text-align center
+  font-size 4rem
+  margin 0
+  padding 0
+
+p
+  font-size 18px
+  line-height 1.5
+  text-align center
+
+  a.button
+    font-family headingFont
+    background #61a847
+    color white
+    display inline-block
+    line-height 3
+    padding 0 25px
+    border-radius 4px
+    text-decoration none
+    margin 20px 0

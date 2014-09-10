@@ -1,0 +1,24 @@
+!!!
+html
+  head
+      title Queriac
+      meta(name="viewport" content="width=device-width, initial-scale=1")
+
+      link(href='//fonts.googleapis.com/css?family=Roboto+Slab:400,700|PT+Serif:400,700', rel='stylesheet', type='text/css')
+      link(href='/assets/styles.css', rel='stylesheet', type='text/css')
+
+      //- script(src="/assets/app.js")
+      script.
+        document.addEventListener("DOMContentLoaded", function(event) {
+          document.querySelector("#logo").classList.add("active")
+        })
+
+  body
+    section
+
+      #logo
+        img(src="/assets/queriac-logo2.svg")
+
+      != yield
+
+    != partial("_footer")
