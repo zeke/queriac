@@ -50,8 +50,6 @@ var RateLimiter = require('limiter').RateLimiter
 var limiter = new RateLimiter(1, 2000)
 var user = "zeke"
 var ghToken = "2e5a23e5341c1858baf6eefe20f66d20cc404530"
-// var ghToken = "777d3e3234da21ed5e0cae6debec0d12bd729167"
-// var ghToken = "6152ab8de3011e4be699842c5cd35bda0c755605"
 var repoURL = URL.format({
   protocol: "https",
   query: {access_token: ghToken},
@@ -68,11 +66,10 @@ var sync = module.exports = function(callback) {
   superagent.get(repoURL, function(err, res) {
     if (err) return callback(err)
     var urls = pluck(res.body, "url").map(function(url) {
+
       // Add auth token to each URL
       var parts = URL.parse(url, true)
-
-      //
-      delete parts.search
+      delete parts.search // node::url gives preferential treatment to search over query
       if(!parts.query) parts.query = {}
       parts.query.access_token = ghToken
 
