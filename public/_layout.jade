@@ -8,7 +8,6 @@ html
       link(href='//fonts.googleapis.com/css?family=Roboto+Slab:400,700|PT+Serif:400,700', rel='stylesheet', type='text/css')
       link(href='/assets/styles.css', rel='stylesheet', type='text/css')
 
-      //- script(src="/assets/app.js")
       script.
         document.addEventListener("DOMContentLoaded", function(event) {
           document.querySelector("#logo").classList.add("active")
@@ -17,10 +16,14 @@ html
   body
     section
 
-      #logo
-        img(src="/assets/queriac-logo2.svg")
+      header
+        #logo
+          img(src="/assets/queriac-logo2.svg")
 
-      != yield
+        h1 Queriac
+
+      #content
+        != yield
 
       footer
         :markdown
