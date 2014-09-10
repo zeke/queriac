@@ -1,16 +1,22 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/z/code/personal/queriac/index.js":[function(require,module,exports){
 window.sync = require("./lib/sync")
+window.fmt = require("util").format
 
 if (typeof(appAPI) === "undefined") {
-  return console.log("not running in extension; bailing")
+  return console.log("not in extension context")
 }
 
 appAPI.ready(function($) {
+
+  // console.log(appAPI.dom)
+
   appAPI.db.async.getList(function(items){
 
     if (items.length) {
       var commands = JSON.parse(items[0].value)
       console.log("Found commands in extension database!", commands)
+      appAPI.dom.addInlineJS(fmt("window.commands=JSON.parse(%j)", JSON.stringify(commands)))
+      appAPI.dom.addRemoteJS("http://localhost:9000/ui.js")
       return;
     }
 
@@ -20,7 +26,7 @@ appAPI.ready(function($) {
       appAPI.db.async.set(
         'commands',
         JSON.stringify(commands, null, 2),
-        appAPI.time.secondsFromNow(30),
+        appAPI.time.minutesFromNow(30),
         function(){
           console.log("Saved commands")
         }
@@ -31,7 +37,7 @@ appAPI.ready(function($) {
 
 })
 
-},{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
+},{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js","util":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
 var URL = require("url")
 var async = require("async")
 var superagent = require("superagent")
@@ -39,10 +45,12 @@ var atob = require("atob")
 var pick = require("lodash.pick")
 var pluck = require("lodash.pluck")
 var user = "zeke"
-var ghToken = "777d3e3234da21ed5e0cae6debec0d12bd729167"
+var ghToken = "2e5a23e5341c1858baf6eefe20f66d20cc404530"
+// var ghToken = "777d3e3234da21ed5e0cae6debec0d12bd729167"
+// var ghToken = "6152ab8de3011e4be699842c5cd35bda0c755605"
 var repoURL = URL.format({
   protocol: "https",
-  auth: ghToken,
+  query: {access_token: ghToken},
   host: "api.github.com",
   pathname: "/repos/" + user + "/queriac-commands/contents",
 })
@@ -51,58 +59,72 @@ var jsExtension = new RegExp("\.js$", "i")
 var specialFilename = new RegExp("^_")
 var commands = {}
 
+var RateLimiter = require('limiter').RateLimiter
+var limiter = new RateLimiter(1, 2000)
+
 var sync = module.exports = function(callback) {
 
   superagent.get(repoURL, function(err, res) {
     if (err) return callback(err)
     var urls = pluck(res.body, "url").map(function(url) {
       // Add auth token to each URL
-      var parts = URL.parse(url)
-      parts.auth = ghToken
+      var parts = URL.parse(url, true)
+
+      //
+      delete parts.search
+      if(!parts.query) parts.query = {}
+      parts.query.access_token = ghToken
+
       return URL.format(parts)
     })
 
-    async.map(urls, superagent.get, function(err, files){
-      if (err) return callback(err)
-      files = pluck(files, 'body')
+    async.map(
+      urls.slice(0, 2000),
 
-      files.forEach(function(file){
+      function(url, callback) {
+        limiter.removeTokens(1, function() {
+          console.log(url)
+          superagent.get(url, function(req, res) {
+            return callback(null, res.body)
+          })
+        })
+      },
 
-        // Skip files that don't have a .js extension
-        if (!file.name.match(jsExtension)) return
+      function(err, files){
+        console.log(files)
+        if (err) return callback(err)
 
-        // Skip "special" files that start with underscores
-        if (file.name.match(specialFilename)) return
+        files.forEach(function(file){
 
-        // The filename is the command name
-        var name = file.name.replace(jsExtension, "")
+          // Skip files that don't have a .js extension
+          if (!file.name.match(jsExtension)) return
 
-        // Decode the Base64 string that GitHub API returns
-        var functionBody = atob(file.content.replace(" ", ""))
+          // Skip "special" files that start with underscores
+          if (file.name.match(specialFilename)) return
 
-        commands[name] = {
-          functionBody: functionBody
-        }
+          // The filename is the command name
+          var name = file.name.replace(jsExtension, "")
 
-        // Turn arguments into an array called `args`
-        // commands[name].functionBody = function() {
-        //   var args = Array.prototype.slice.apply(arguments)
-        //   eval(content)
-        // }
+          // Decode the Base64 string that GitHub API returns
+          var functionBody = atob(file.content.replace(" ", ""))
 
-        // A comment on the first line of the file becomes the description.
-        if (functionBody.match(commentPattern)) {
-          commands[name].description = functionBody.split("\n")[0].replace(commentPattern, "")
-        }
+          commands[name] = {
+            functionBody: functionBody
+          }
 
+          // A comment on the first line of the file becomes the description.
+          if (functionBody.match(commentPattern)) {
+            commands[name].description = functionBody.split("\n")[0].replace(commentPattern, "")
+          }
+
+        })
+        return callback(null, commands)
       })
-      return callback(null, commands)
-    })
   })
 
 }
 
-},{"async":"/Users/z/code/personal/queriac/node_modules/async/lib/async.js","atob":"/Users/z/code/personal/queriac/node_modules/atob/index.js","lodash.pick":"/Users/z/code/personal/queriac/node_modules/lodash.pick/index.js","lodash.pluck":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/index.js","superagent":"/Users/z/code/personal/queriac/node_modules/superagent/lib/client.js","url":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js"}],"/Users/z/code/personal/queriac/node_modules/async/lib/async.js":[function(require,module,exports){
+},{"async":"/Users/z/code/personal/queriac/node_modules/async/lib/async.js","atob":"/Users/z/code/personal/queriac/node_modules/atob/index.js","limiter":"/Users/z/code/personal/queriac/node_modules/limiter/index.js","lodash.pick":"/Users/z/code/personal/queriac/node_modules/lodash.pick/index.js","lodash.pluck":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/index.js","superagent":"/Users/z/code/personal/queriac/node_modules/superagent/lib/client.js","url":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js"}],"/Users/z/code/personal/queriac/node_modules/async/lib/async.js":[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -1363,6 +1385,310 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.toByteArray = b64ToByteArray
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
+
+},{}],"/Users/z/code/personal/queriac/node_modules/limiter/index.js":[function(require,module,exports){
+
+exports.RateLimiter = require('./lib/rateLimiter');
+exports.TokenBucket = require('./lib/tokenBucket');
+
+},{"./lib/rateLimiter":"/Users/z/code/personal/queriac/node_modules/limiter/lib/rateLimiter.js","./lib/tokenBucket":"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/code/personal/queriac/node_modules/limiter/lib/rateLimiter.js":[function(require,module,exports){
+var TokenBucket = require('./tokenBucket');
+
+/**
+ * A generic rate limiter. Underneath the hood, this uses a token bucket plus
+ * an additional check to limit how many tokens we can remove each interval.
+ * @author John Hurliman <jhurliman@jhurliman.org>
+ *
+ * @param {Number} tokensPerInterval Maximum number of tokens that can be
+ *  removed at any given moment and over the course of one interval.
+ * @param {String|Number} interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param {Boolean} fireImmediately Optional. Whether or not the callback
+ *  will fire immediately when rate limiting is in effect (default is false).
+ */
+var RateLimiter = function(tokensPerInterval, interval, fireImmediately) {
+  this.tokenBucket = new TokenBucket(tokensPerInterval, tokensPerInterval,
+    interval, null);
+  
+  // Fill the token bucket to start
+  this.tokenBucket.content = tokensPerInterval;
+  
+  this.curIntervalStart = +new Date();
+  this.tokensThisInterval = 0;
+  this.fireImmediately = fireImmediately;
+};
+
+RateLimiter.prototype = {
+  tokenBucket: null,
+  curIntervalStart: 0,
+  tokensThisInterval: 0,
+  fireImmediately: false,
+  
+  /**
+   * Remove the requested number of tokens and fire the given callback. If the
+   * rate limiter contains enough tokens and we haven't spent too many tokens
+   * in this interval already, this will happen immediately. Otherwise, the
+   * removal and callback will happen when enough tokens become available.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Function} callback(err, remainingTokens)
+   * @returns {Boolean} True if the callback was fired immediately, otherwise
+   *  false.
+   */
+  removeTokens: function(count, callback) {
+    // Make sure the request isn't for more than we can handle
+    if (count > this.tokenBucket.bucketSize) {
+      callback('Requested tokens ' + count +
+        ' exceeds maximum tokens per interval ' + this.tokenBucket.bucketSize,
+        null);
+      return false;
+    }
+    
+    var self = this;
+    var now = Date.now();
+    
+    // Advance the current interval and reset the current interval token count
+    // if needed
+    if (now - this.curIntervalStart >= this.tokenBucket.interval) {
+      this.curIntervalStart = now;
+      this.tokensThisInterval = 0;
+    }
+    
+    // If we don't have enough tokens left in this interval, wait until the
+    // next interval
+    if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval) {
+      if (this.fireImmediately) {
+        callback(null, -1);
+      } else {
+        var waitInterval = Math.ceil(
+          this.curIntervalStart + this.tokenBucket.interval - now);
+
+        setTimeout(function() {
+          self.tokenBucket.removeTokens(count, afterTokensRemoved);
+        }, waitInterval);
+      }
+      return false;
+    }
+    
+    // Remove the requested number of tokens from the token bucket
+    return this.tokenBucket.removeTokens(count, afterTokensRemoved);
+
+    function afterTokensRemoved(err, tokensRemaining) {
+      if (err) return callback(err, null);
+
+      self.tokensThisInterval += count;
+      callback(null, tokensRemaining);
+    }
+  },
+
+  /**
+   * Attempt to remove the requested number of tokens and return immediately.
+   * If the bucket (and any parent buckets) contains enough tokens and we
+   * haven't spent too many tokens in this interval already, this will return
+   * true. Otherwise, false is returned.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Boolean} True if the tokens were successfully removed, otherwise
+   *  false.
+   */
+  tryRemoveTokens: function(count) {
+    // Make sure the request isn't for more than we can handle
+    if (count > this.tokenBucket.bucketSize)
+      return false;
+
+    var now = Date.now();
+
+    // Advance the current interval and reset the current interval token count
+    // if needed
+    if (now - this.curIntervalStart >= this.tokenBucket.interval) {
+      this.curIntervalStart = now;
+      this.tokensThisInterval = 0;
+    }
+
+    // If we don't have enough tokens left in this interval, return false
+    if (count > this.tokenBucket.tokensPerInterval - this.tokensThisInterval)
+      return false;
+
+    // Try to remove the requested number of tokens from the token bucket
+    return this.tokenBucket.tryRemoveTokens(count);
+  },
+
+  /**
+   * Returns the number of tokens remaining in the TokenBucket.
+   * @returns {Number} The number of tokens remaining.
+   */
+  getTokensRemaining: function () {
+    this.tokenBucket.drip();
+    return this.tokenBucket.content;
+  }
+};
+
+module.exports = RateLimiter;
+
+},{"./tokenBucket":"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js":[function(require,module,exports){
+
+/**
+ * A hierarchical token bucket for rate limiting. See
+ * http://en.wikipedia.org/wiki/Token_bucket for more information.
+ * @author John Hurliman <jhurliman@cull.tv>
+ * 
+ * @param {Number} bucketSize Maximum number of tokens to hold in the bucket.
+ *  Also known as the burst rate.
+ * @param {Number} tokensPerInterval Number of tokens to drip into the bucket
+ *  over the course of one interval.
+ * @param {String|Number} interval The interval length in milliseconds, or as
+ *  one of the following strings: 'second', 'minute', 'hour', day'.
+ * @param {TokenBucket} parentBucket Optional. A token bucket that will act as
+ *  the parent of this bucket.
+ */
+var TokenBucket = function(bucketSize, tokensPerInterval, interval, parentBucket) {
+  this.bucketSize = bucketSize;
+  this.tokensPerInterval = tokensPerInterval;
+  
+  if (typeof interval === 'string') {
+    switch (interval) {
+      case 'sec': case 'second':
+        this.interval = 1000; break;
+      case 'min': case 'minute':
+        this.interval = 1000 * 60; break;
+      case 'hr': case 'hour':
+        this.interval = 1000 * 60 * 60; break;
+      case 'day':
+        this.interval = 1000 * 60 * 60 * 24; break;
+    }
+  } else {
+    this.interval = interval;
+  }
+  
+  this.parentBucket = parentBucket;
+  this.content = 0;
+  this.lastDrip = +new Date();
+};
+
+TokenBucket.prototype = {
+  bucketSize: 1,
+  tokensPerInterval: 1,
+  interval: 1000,
+  parentBucket: null,
+  content: 0,
+  lastDrip: 0,
+  
+  /**
+   * Remove the requested number of tokens and fire the given callback. If the
+   * bucket (and any parent buckets) contains enough tokens this will happen
+   * immediately. Otherwise, the removal and callback will happen when enough
+   * tokens become available.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Function} callback(err, remainingTokens)
+   * @returns {Boolean} True if the callback was fired immediately, otherwise
+   *  false.
+   */
+  removeTokens: function(count, callback) {
+    var self = this;
+    
+    // Is this an infinite size bucket?
+    if (!this.bucketSize) {
+      callback(null, count, Number.POSITIVE_INFINITY);
+      return true;
+    }
+    
+    // Make sure the bucket can hold the requested number of tokens
+    if (count > this.bucketSize) {
+      callback('Requested tokens ' + count + ' exceeds bucket size ' +
+        this.bucketSize, null);
+      return false;
+    }
+    
+    // Drip new tokens into this bucket
+    this.drip();
+    
+    // If we don't have enough tokens in this bucket, come back later
+    if (count > this.content)
+      return comeBackLater();
+    
+    if (this.parentBucket) {
+      // Remove the requested from the parent bucket first
+      return this.parentBucket.removeTokens(count, function(err, remainingTokens) {
+        if (err) return callback(err, null);
+        
+        // Check that we still have enough tokens in this bucket
+        if (count > self.content)
+          return comeBackLater();
+        
+        // Tokens were removed from the parent bucket, now remove them from
+        // this bucket and fire the callback. Note that we look at the current
+        // bucket and parent bucket's remaining tokens and return the smaller
+        // of the two values
+        self.content -= count;
+        callback(null, Math.min(remainingTokens, self.content));
+      });
+    } else {
+      // Remove the requested tokens from this bucket and fire the callback
+      this.content -= count;
+      callback(null, this.content);
+      return true;
+    }
+    
+    function comeBackLater() {
+      // How long do we need to wait to make up the difference in tokens?
+      var waitInterval = Math.ceil(
+        (count - self.content) * (self.interval / self.tokensPerInterval));
+      setTimeout(function() { self.removeTokens(count, callback); }, waitInterval);
+      return false;
+    }
+  },
+
+  /**
+   * Attempt to remove the requested number of tokens and return immediately.
+   * If the bucket (and any parent buckets) contains enough tokens this will
+   * return true, otherwise false is returned.
+   * @param {Number} count The number of tokens to remove.
+   * @param {Boolean} True if the tokens were successfully removed, otherwise
+   *  false.
+   */
+  tryRemoveTokens: function(count) {
+    // Is this an infinite size bucket?
+    if (!this.bucketSize)
+      return true;
+    
+    // Make sure the bucket can hold the requested number of tokens
+    if (count > this.bucketSize)
+      return false;
+    
+    // Drip new tokens into this bucket
+    this.drip();
+
+    // If we don't have enough tokens in this bucket, return false
+    if (count > this.content)
+      return false;
+
+    // Try to remove the requested tokens from the parent bucket
+    if (this.parentBucket && !this.parent.tryRemoveTokens(count))
+      return false;
+
+    // Remove the requested tokens from this bucket and return
+    this.content -= count;
+    return true;
+  },
+
+  /**
+   * Add any new tokens to the bucket since the last drip.
+   * @returns {Boolean} True if new tokens were added, otherwise false.
+   */
+  drip: function() {
+    if (!this.tokensPerInterval) {
+      this.content = this.bucketSize;
+      return;
+    }
+    
+    var now = +new Date();
+    var deltaMS = Math.max(now - this.lastDrip, 0);
+    this.lastDrip = now;
+    
+    var dripAmount = deltaMS * (this.tokensPerInterval / this.interval);
+    this.content = Math.min(this.content + dripAmount, this.bucketSize);
+  }
+};
+
+module.exports = TokenBucket;
 
 },{}],"/Users/z/code/personal/queriac/node_modules/lodash.pick/index.js":[function(require,module,exports){
 /**
@@ -9559,6 +9885,31 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
+},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
 },{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 
@@ -11023,4 +11374,601 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js","querystring":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js"}]},{},["/Users/z/code/personal/queriac/index.js"]);
+},{"punycode":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js","querystring":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js"}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js":[function(require,module,exports){
+(function (process,global){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = require('./support/isBuffer');
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = require('inherits');
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js","_process":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","inherits":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js"}]},{},["/Users/z/code/personal/queriac/index.js"]);

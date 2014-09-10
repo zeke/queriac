@@ -1,6 +1,10 @@
+console.log("UI")
+// console.log($)
+// document.write("foo")
+
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-var Queriac = (function() {
+window.Queriac = (function() {
 
   function Queriac() {
     // Do some Scope binding nonsense
@@ -8,7 +12,7 @@ var Queriac = (function() {
     for (var i in funks) this[funks[i]] = __bind(this[funks[i]], this)
 
     // document.addEventListener('DOMContentLoaded', this.init);
-    this.init();
+    // this.init();
   }
 
   Queriac.prototype.init = function() {
@@ -86,13 +90,13 @@ var Queriac = (function() {
 
       // Find the given keyword's command in 'local storage'
       // The function will have access to the local `args` variable
-      appAPI.db.async.get(keyword, function(command) {
-        if (command) {
-          eval(command)
-        } else {
-          console.error("Queriac command not found", keyword)
-        }
-      });
+      console.log(keyword, args)
+
+      if (!window.commands[keyword])
+        return console.log("Command not found: %s", keyword)
+
+      eval(commands[keyword].functionBody)
+
     }
     this.close()
   }
@@ -114,48 +118,5 @@ var Queriac = (function() {
 
 })();
 
-var GitHub = (function() {
-
-  function GitHub() {}
-
-  GitHub.delayBetweenRequests = 3000
-
-  GitHub.getCommandList = function(user) {
-    var githubCommandsUrl = "https://api.github.com/repos/" + user + "/queriac-commands/contents"
-    appAPI.request.get(githubCommandsUrl, function(data) {
-      var files = JSON.parse(data);
-      for (var i in files) {
-        var url = files[i].url
-        setTimeout(
-          function(u) {
-            return function() { GitHub.saveCommand(u) }
-          }(url), GitHub.delayBetweenRequests*i
-        )
-      }
-
-    })
-  }
-
-  GitHub.saveCommand = function(url) {
-    appAPI.request.get(url, function(data) {
-      var command = JSON.parse(data);
-      var keyword = command.name.replace('.js', '')
-
-      // For some reason, github's API puts a newline at the end of the content string...
-      var content = atob(command.content.replace(/\n/g, '')) // decode base64,
-      // content = command.content
-
-      appAPI.db.async.set(
-        keyword,
-        content//,
-        // null, // set this to some time in the future
-        // function() {
-        //   console.log("saved command", keyword, content);
-        // }
-      );
-    });
-  };
-
-  return GitHub;
-
-})();
+window.queriac = new Queriac();
+queriac.init()
