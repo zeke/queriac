@@ -12,3 +12,11 @@ Check out some example commands at https://github.com/zeke/queriac-commands
 1. Create a github repo called `queriac-commands` and fill it up with scripts.
 1. Each script will become a queriac command.
 1. When viewing a webpage, double-tap the SHIFT key on your keyboard to open Queriac input.
+
+
+## Running this web app
+
+```sh
+npm install
+npm start
+```

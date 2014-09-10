@@ -22,7 +22,6 @@
     "atob": "^1.1.2",
     "harp": "^0.13.0",
     "limiter": "^1.0.5",
-    "lodash.pick": "^2.4.1",
     "lodash.pluck": "^2.4.1",
     "superagent": "^0.18.2"
   },
