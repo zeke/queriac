@@ -1,8 +1,6 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/z/code/personal/queriac/index.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/z/personal/queriac/index.js":[function(require,module,exports){
 window.sync = require("./lib/sync")
 window.fmt = require("util").format
-// window.host = "http://localhost:9000"
-window.host = "https://queriac.herokuapp.com"
 
 if (typeof(appAPI) === "undefined") {
   return console.log("not in extension context")
@@ -14,7 +12,12 @@ window.inject = function(commands) {
 }
 
 appAPI.ready(function($) {
+
+  window.host = appAPI.appInfo.environment === "staging" ?
+    "http://localhost:9000" : "https://queriac.herokuapp.com"
+
   // appAPI.db.removeAll()
+
   appAPI.db.async.getList(function(items){
 
     if (items.length) {
@@ -40,7 +43,7 @@ appAPI.ready(function($) {
   })
 })
 
-},{"./lib/sync":"/Users/z/code/personal/queriac/lib/sync.js","util":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/Users/z/code/personal/queriac/lib/sync.js":[function(require,module,exports){
+},{"./lib/sync":"/Users/z/personal/queriac/lib/sync.js","util":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/Users/z/personal/queriac/lib/sync.js":[function(require,module,exports){
 var URL = require("url")
 var async = require("async")
 var superagent = require("superagent")
@@ -122,7 +125,7 @@ var sync = module.exports = function(callback) {
 
 }
 
-},{"async":"/Users/z/code/personal/queriac/node_modules/async/lib/async.js","atob":"/Users/z/code/personal/queriac/node_modules/atob/index.js","limiter":"/Users/z/code/personal/queriac/node_modules/limiter/index.js","lodash.pluck":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/index.js","superagent":"/Users/z/code/personal/queriac/node_modules/superagent/lib/client.js","url":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js"}],"/Users/z/code/personal/queriac/node_modules/async/lib/async.js":[function(require,module,exports){
+},{"async":"/Users/z/personal/queriac/node_modules/async/lib/async.js","atob":"/Users/z/personal/queriac/node_modules/atob/index.js","limiter":"/Users/z/personal/queriac/node_modules/limiter/index.js","lodash.pluck":"/Users/z/personal/queriac/node_modules/lodash.pluck/index.js","superagent":"/Users/z/personal/queriac/node_modules/superagent/lib/client.js","url":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js"}],"/Users/z/personal/queriac/node_modules/async/lib/async.js":[function(require,module,exports){
 (function (process){
 /*!
  * async
@@ -1249,7 +1252,7 @@ var sync = module.exports = function(callback) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js"}],"/Users/z/code/personal/queriac/node_modules/atob/index.js":[function(require,module,exports){
+},{"_process":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js"}],"/Users/z/personal/queriac/node_modules/atob/index.js":[function(require,module,exports){
 (function (Buffer){
 (function () {
   "use strict";
@@ -1262,7 +1265,7 @@ var sync = module.exports = function(callback) {
 }());
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/z/code/personal/queriac/node_modules/base64-js/lib/b64.js":[function(require,module,exports){
+},{"buffer":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js"}],"/Users/z/personal/queriac/node_modules/base64-js/lib/b64.js":[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -1384,12 +1387,12 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],"/Users/z/code/personal/queriac/node_modules/limiter/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/limiter/index.js":[function(require,module,exports){
 
 exports.RateLimiter = require('./lib/rateLimiter');
 exports.TokenBucket = require('./lib/tokenBucket');
 
-},{"./lib/rateLimiter":"/Users/z/code/personal/queriac/node_modules/limiter/lib/rateLimiter.js","./lib/tokenBucket":"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/code/personal/queriac/node_modules/limiter/lib/rateLimiter.js":[function(require,module,exports){
+},{"./lib/rateLimiter":"/Users/z/personal/queriac/node_modules/limiter/lib/rateLimiter.js","./lib/tokenBucket":"/Users/z/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/personal/queriac/node_modules/limiter/lib/rateLimiter.js":[function(require,module,exports){
 var TokenBucket = require('./tokenBucket');
 
 /**
@@ -1521,7 +1524,7 @@ RateLimiter.prototype = {
 
 module.exports = RateLimiter;
 
-},{"./tokenBucket":"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/code/personal/queriac/node_modules/limiter/lib/tokenBucket.js":[function(require,module,exports){
+},{"./tokenBucket":"/Users/z/personal/queriac/node_modules/limiter/lib/tokenBucket.js"}],"/Users/z/personal/queriac/node_modules/limiter/lib/tokenBucket.js":[function(require,module,exports){
 
 /**
  * A hierarchical token bucket for rate limiting. See
@@ -1688,7 +1691,7 @@ TokenBucket.prototype = {
 
 module.exports = TokenBucket;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -1723,7 +1726,7 @@ var pluck = map;
 
 module.exports = pluck;
 
-},{"lodash.map":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/index.js":[function(require,module,exports){
+},{"lodash.map":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -1795,7 +1798,7 @@ function map(collection, callback, thisArg) {
 
 module.exports = map;
 
-},{"lodash.createcallback":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/index.js","lodash.forown":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/index.js":[function(require,module,exports){
+},{"lodash.createcallback":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/index.js","lodash.forown":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -1878,7 +1881,7 @@ function createCallback(func, thisArg, argCount) {
 
 module.exports = createCallback;
 
-},{"lodash._basecreatecallback":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js","lodash._baseisequal":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.keys":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/index.js","lodash.property":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.property/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js":[function(require,module,exports){
+},{"lodash._basecreatecallback":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js","lodash._baseisequal":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.keys":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/index.js","lodash.property":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.property/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -1960,7 +1963,7 @@ function baseCreateCallback(func, thisArg, argCount) {
 
 module.exports = baseCreateCallback;
 
-},{"lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash.bind":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js","lodash.identity":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js","lodash.support":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js":[function(require,module,exports){
+},{"lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash.bind":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js","lodash.identity":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js","lodash.support":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2005,7 +2008,7 @@ var setBindData = !defineProperty ? noop : function(func, value) {
 
 module.exports = setBindData;
 
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2041,7 +2044,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2069,7 +2072,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2111,7 +2114,7 @@ function bind(func, thisArg) {
 
 module.exports = bind;
 
-},{"lodash._createwrapper":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js":[function(require,module,exports){
+},{"lodash._createwrapper":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2219,7 +2222,7 @@ function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, ar
 
 module.exports = createWrapper;
 
-},{"lodash._basebind":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js","lodash._basecreatewrapper":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isfunction":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js":[function(require,module,exports){
+},{"lodash._basebind":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js","lodash._basecreatewrapper":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isfunction":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2283,7 +2286,7 @@ function baseBind(bindData) {
 
 module.exports = baseBind;
 
-},{"lodash._basecreate":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
+},{"lodash._basecreate":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -2329,7 +2332,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2365,7 +2368,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2393,7 +2396,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2473,7 +2476,7 @@ function baseCreateWrapper(bindData) {
 
 module.exports = baseCreateWrapper;
 
-},{"lodash._basecreate":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
+},{"lodash._basecreate":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -2519,7 +2522,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2555,7 +2558,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2583,7 +2586,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2612,7 +2615,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2652,7 +2655,7 @@ function slice(array, start, end) {
 
 module.exports = slice;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2682,7 +2685,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -2726,7 +2729,7 @@ support.funcNames = typeof Function.name == 'string';
 module.exports = support;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2762,7 +2765,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2973,7 +2976,7 @@ function baseIsEqual(a, b, callback, isWhere, stackA, stackB) {
 
 module.exports = baseIsEqual;
 
-},{"lodash._getarray":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/index.js","lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js","lodash._releasearray":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/index.js","lodash.forin":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.forin/index.js","lodash.isfunction":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.isfunction/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/index.js":[function(require,module,exports){
+},{"lodash._getarray":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/index.js","lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js","lodash._releasearray":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/index.js","lodash.forin":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.forin/index.js","lodash.isfunction":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.isfunction/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -2996,7 +2999,7 @@ function getArray() {
 
 module.exports = getArray;
 
-},{"lodash._arraypool":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/node_modules/lodash._arraypool/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/node_modules/lodash._arraypool/index.js":[function(require,module,exports){
+},{"lodash._arraypool":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/node_modules/lodash._arraypool/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._getarray/node_modules/lodash._arraypool/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3011,7 +3014,7 @@ var arrayPool = [];
 
 module.exports = arrayPool;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3033,7 +3036,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3060,7 +3063,7 @@ function releaseArray(array) {
 
 module.exports = releaseArray;
 
-},{"lodash._arraypool":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._arraypool/index.js","lodash._maxpoolsize":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._maxpoolsize/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._arraypool/index.js":[function(require,module,exports){
+},{"lodash._arraypool":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._arraypool/index.js","lodash._maxpoolsize":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._maxpoolsize/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._arraypool/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3075,7 +3078,7 @@ var arrayPool = [];
 
 module.exports = arrayPool;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._maxpoolsize/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._releasearray/node_modules/lodash._maxpoolsize/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3090,7 +3093,7 @@ var maxPoolSize = 40;
 
 module.exports = maxPoolSize;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.forin/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.forin/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3146,7 +3149,7 @@ var forIn = function(collection, callback, thisArg) {
 
 module.exports = forIn;
 
-},{"lodash._basecreatecallback":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js","lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
+},{"lodash._basecreatecallback":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._basecreatecallback/index.js","lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash._baseisequal/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3175,7 +3178,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3216,7 +3219,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3238,7 +3241,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3276,7 +3279,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._isnative/index.js","lodash._shimkeys":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._isnative/index.js","lodash._shimkeys":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3312,7 +3315,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3352,7 +3355,7 @@ var shimKeys = function(object) {
 
 module.exports = shimKeys;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.keys/node_modules/lodash._shimkeys/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3374,7 +3377,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.property/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.createcallback/node_modules/lodash.property/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3416,7 +3419,7 @@ function property(key) {
 
 module.exports = property;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3468,7 +3471,7 @@ var forOwn = function(collection, callback, thisArg) {
 
 module.exports = forOwn;
 
-},{"lodash._basecreatecallback":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/index.js","lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js","lodash.keys":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/index.js":[function(require,module,exports){
+},{"lodash._basecreatecallback":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/index.js","lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js","lodash.keys":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3550,7 +3553,7 @@ function baseCreateCallback(func, thisArg, argCount) {
 
 module.exports = baseCreateCallback;
 
-},{"lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash.bind":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js","lodash.identity":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js","lodash.support":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js":[function(require,module,exports){
+},{"lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash.bind":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js","lodash.identity":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js","lodash.support":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3595,7 +3598,7 @@ var setBindData = !defineProperty ? noop : function(func, value) {
 
 module.exports = setBindData;
 
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3631,7 +3634,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3659,7 +3662,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3701,7 +3704,7 @@ function bind(func, thisArg) {
 
 module.exports = bind;
 
-},{"lodash._createwrapper":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js":[function(require,module,exports){
+},{"lodash._createwrapper":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3809,7 +3812,7 @@ function createWrapper(func, bitmask, partialArgs, partialRightArgs, thisArg, ar
 
 module.exports = createWrapper;
 
-},{"lodash._basebind":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js","lodash._basecreatewrapper":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isfunction":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js":[function(require,module,exports){
+},{"lodash._basebind":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js","lodash._basecreatewrapper":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isfunction":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3873,7 +3876,7 @@ function baseBind(bindData) {
 
 module.exports = baseBind;
 
-},{"lodash._basecreate":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
+},{"lodash._basecreate":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -3919,7 +3922,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3955,7 +3958,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -3983,7 +3986,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basebind/node_modules/lodash.isobject/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4024,7 +4027,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4104,7 +4107,7 @@ function baseCreateWrapper(bindData) {
 
 module.exports = baseCreateWrapper;
 
-},{"lodash._basecreate":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
+},{"lodash._basecreate":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js","lodash._setbinddata":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash._setbinddata/index.js","lodash._slice":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -4150,7 +4153,7 @@ if (!nativeCreate) {
 module.exports = baseCreate;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js","lodash.noop":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4186,7 +4189,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash._basecreate/node_modules/lodash.noop/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4214,7 +4217,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash._basecreatewrapper/node_modules/lodash.isobject/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4255,7 +4258,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._createwrapper/node_modules/lodash.isfunction/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4284,7 +4287,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.bind/node_modules/lodash._slice/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4324,7 +4327,7 @@ function slice(array, start, end) {
 
 module.exports = slice;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.identity/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4354,7 +4357,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/index.js":[function(require,module,exports){
 (function (global){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -4398,7 +4401,7 @@ support.funcNames = typeof Function.name == 'string';
 module.exports = support;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._basecreatecallback/node_modules/lodash.support/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4434,7 +4437,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4456,7 +4459,7 @@ var objectTypes = {
 
 module.exports = objectTypes;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4494,7 +4497,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"lodash._isnative":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._isnative/index.js","lodash._shimkeys":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js","lodash.isobject":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash.isobject/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._isnative/index.js":[function(require,module,exports){
+},{"lodash._isnative":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._isnative/index.js","lodash._shimkeys":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js","lodash.isobject":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash.isobject/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._isnative/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4530,7 +4533,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash._shimkeys/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4570,7 +4573,7 @@ var shimKeys = function(object) {
 
 module.exports = shimKeys;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash.isobject/index.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash.keys/node_modules/lodash.isobject/index.js":[function(require,module,exports){
 /**
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash modularize modern exports="npm" -o ./npm/`
@@ -4611,7 +4614,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{"lodash._objecttypes":"/Users/z/code/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/code/personal/queriac/node_modules/superagent/lib/client.js":[function(require,module,exports){
+},{"lodash._objecttypes":"/Users/z/personal/queriac/node_modules/lodash.pluck/node_modules/lodash.map/node_modules/lodash.forown/node_modules/lodash._objecttypes/index.js"}],"/Users/z/personal/queriac/node_modules/superagent/lib/client.js":[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -5662,7 +5665,7 @@ request.put = function(url, data, fn){
 
 module.exports = request;
 
-},{"emitter":"/Users/z/code/personal/queriac/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/z/code/personal/queriac/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/z/code/personal/queriac/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
+},{"emitter":"/Users/z/personal/queriac/node_modules/superagent/node_modules/component-emitter/index.js","reduce":"/Users/z/personal/queriac/node_modules/superagent/node_modules/reduce-component/index.js"}],"/Users/z/personal/queriac/node_modules/superagent/node_modules/component-emitter/index.js":[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -5828,7 +5831,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],"/Users/z/code/personal/queriac/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/superagent/node_modules/reduce-component/index.js":[function(require,module,exports){
 
 /**
  * Reduce `arr` with `fn`.
@@ -5853,7 +5856,7 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/index.js":[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -7024,7 +7027,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":"/Users/z/code/personal/queriac/node_modules/base64-js/lib/b64.js","ieee754":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js"}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js":[function(require,module,exports){
+},{"base64-js":"/Users/z/personal/queriac/node_modules/base64-js/lib/b64.js","ieee754":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js"}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/buffer/node_modules/ieee754/index.js":[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -7110,7 +7113,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7135,7 +7138,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -7200,7 +7203,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js":[function(require,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -7711,7 +7714,7 @@ process.chdir = function (dir) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/decode.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/decode.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7797,7 +7800,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/encode.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/encode.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7884,13 +7887,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js":[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/decode.js","./encode":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/encode.js"}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js":[function(require,module,exports){
+},{"./decode":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/decode.js","./encode":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/encode.js"}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/url/url.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8599,14 +8602,14 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js","querystring":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js"}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
+},{"punycode":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/punycode/punycode.js","querystring":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/querystring-es3/index.js"}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js":[function(require,module,exports){
+},{}],"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/util.js":[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -9196,4 +9199,4 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js","_process":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","inherits":"/Users/z/code/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js"}]},{},["/Users/z/code/personal/queriac/index.js"]);
+},{"./support/isBuffer":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/util/support/isBufferBrowser.js","_process":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","inherits":"/Users/z/personal/queriac/node_modules/watchify/node_modules/browserify/node_modules/inherits/inherits_browser.js"}]},{},["/Users/z/personal/queriac/index.js"]);

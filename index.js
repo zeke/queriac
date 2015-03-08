@@ -1,7 +1,5 @@
 window.sync = require("./lib/sync")
 window.fmt = require("util").format
-// window.host = "http://localhost:9000"
-window.host = "https://queriac.herokuapp.com"
 
 if (typeof(appAPI) === "undefined") {
   return console.log("not in extension context")
@@ -14,9 +12,11 @@ window.inject = function(commands) {
 
 appAPI.ready(function($) {
 
-  console.log(appAPI.appInfo)
-  
+  window.host = appAPI.appInfo.environment === "staging" ?
+    "http://localhost:9000" : "https://queriac.herokuapp.com"
+
   // appAPI.db.removeAll()
+
   appAPI.db.async.getList(function(items){
 
     if (items.length) {
