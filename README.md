@@ -1,6 +1,6 @@
 # Queriac
 
-Queriac is browser extension that gives you a univeral javascript command line in your browser. Set up a github repository full of javascript files, and each file becomes a command.
+Queriac is browser extension that gives you a universal javascript command line in your browser. Set up a github repository full of javascript files, and each file becomes a command.
 
 It's like Alfred.app/Quicksilver/Launchy, but in the browser.
 
